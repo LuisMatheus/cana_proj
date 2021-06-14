@@ -11,7 +11,7 @@ import java.util.ArrayList;
  *
  * @author Matheus
  */
-public class Contract_Manager {
+public abstract class Contract_Manager {
 
     public int meses;
     public int fornecedores;
@@ -112,11 +112,15 @@ public class Contract_Manager {
         }
 
         return null;
-    }
-    // </editor-fold>
 
+    }
+
+    public abstract void printClear();
+
+    public abstract void printAdd(String s);
+
+    // </editor-fold>
     //PROJETO 2 ---------------------------------------------------------------------------------
-    
     // <editor-fold defaultstate="collapsed" desc="Projeto 2 - Algoritimos">
     //Algoritimos
     public void InsertionSort(Contrato[] arrayCopia) {
@@ -200,4 +204,159 @@ public class Contract_Manager {
     }
     // </editor-fold>
 
+    //PROJETO 3 ---------------------------------------------------------------------------------
+    // <editor-fold defaultstate="collapsed" desc="Projeto 3 - Algoritimos">
+    public void escolhaGulosa() {
+        ArrayList<Contrato> aux = new ArrayList<Contrato>();
+        double h = Integer.MAX_VALUE;
+        Contrato aux1 = null;
+        for (int i = 0; i < fornecedores; i++) {
+            for (int j = 0; j < meses; j++) {
+
+                if ((taxa + contratos_matriz[i][0][j]) / (j + 1) <= h) {
+                    aux1 = new Contrato(i + 1, 1, j + 1, contratos_matriz[i][0][j]);
+
+                    h = (taxa + contratos_matriz[i][0][j]) / (j + 1);
+
+                }
+            }
+        }
+
+        aux.add(aux1);
+        int mes = aux1.getMes_fim();
+
+        while (mes != meses) {
+            h = Integer.MAX_VALUE;
+            for (int i = 0; i < fornecedores; i++) {
+                for (int j = mes; j < meses; j++) {
+                    if ((taxa + contratos_matriz[i][mes][j]) / (j - mes + 1) <= h) {
+                        aux1 = new Contrato(i + 1, mes + 1, j + 1, contratos_matriz[i][mes][j]);
+                        h = (taxa + contratos_matriz[i][mes][j]) / (j - mes + 1);
+                    }
+                }
+            }
+            aux.add(aux1);
+            mes = aux1.getMes_fim();
+        }
+
+        double valor = 0;
+
+        for (int i = 0; i < aux.size(); i++) {
+
+            printAdd(aux.get(i).getFornecedor() + " " + aux.get(i).getMes_inicio() + " " + aux.get(i).getMes_fim() + " " + aux.get(i).getValor_Contrato());
+            valor = valor + aux.get(i).getValor_Contrato();
+            if (i != aux.size() - 1) {
+                valor = valor + taxa;
+            }
+        }
+
+        printAdd("VALOR TOTAL:" + valor);
+    }
+
+    public void chamarRecursivo() {
+        double[][] menoresValor = new double[meses][meses];
+        int[][] fornecedores_matriz = new int[meses][meses];
+        double h = Integer.MAX_VALUE;
+        for (int i = 0; i < meses; i++) {
+            for (int j = i; j < meses; j++) {
+                h = Integer.MAX_VALUE;
+                for (int k = 0; k < fornecedores; k++) {
+                    if (contratos_matriz[k][i][j] < h) {
+                        menoresValor[i][j] = contratos_matriz[k][i][j];
+                        fornecedores_matriz[i][j] = k + 1;
+                        h = contratos_matriz[k][i][j];
+                    }
+                }
+            }
+        }
+        double total = 0;
+        total = total + recursivo(menoresValor, fornecedores_matriz, 0, meses - 1);
+        printAdd("TOTAL: " + total);
+    }
+
+    public double recursivo(double[][] menoresValor, int[][] fornecedores_matriz, int inicio, int fim) {
+
+        double menorValor = menoresValor[inicio][fim];
+        int sup = -1;
+        for (int j = inicio; j < fim; j++) {
+            if (menoresValor[inicio][j] + menoresValor[j + 1][fim] + taxa < menorValor) {
+                menorValor = menoresValor[inicio][j] + menoresValor[j + 1][fim] + taxa;
+                sup = j;
+            }
+        }
+
+        if (sup != -1) {
+
+            return recursivo(menoresValor, fornecedores_matriz, inicio, sup) + recursivo(menoresValor, fornecedores_matriz, sup + 1, fim) + taxa;
+
+        } else {
+            int aux = inicio + 1;
+            int aux1 = fim + 1;
+
+            printAdd("Contrato Fornecedor: " + fornecedores_matriz[inicio][fim] + "\n Mes inicio: " + aux + "\n Mes Fim:  " + aux1 + "\n Valor Unit:  " + menoresValor[inicio][fim]);
+            printAdd("-------------------------");
+            return menoresValor[inicio][fim];
+        }
+
+    }
+
+    public void dinamico() {
+        double[][] menoresValor = new double[meses][meses];
+        int[][] fornecedores_matriz = new int[meses][meses];
+        double h = Integer.MAX_VALUE;
+        for (int i = 0; i < meses; i++) {
+            for (int j = i; j < meses; j++) {
+                h = Integer.MAX_VALUE;
+                for (int k = 0; k < fornecedores; k++) {
+                    if (contratos_matriz[k][i][j] < h) {
+                        menoresValor[i][j] = contratos_matriz[k][i][j];
+                        fornecedores_matriz[i][j] = k + 1;
+                        h = contratos_matriz[k][i][j];
+                    }
+                }
+            }
+        }
+
+        double[][] m = new double[meses][meses];
+        int[][] s = new int[meses][meses];
+
+        for (int i = 0; i < meses; i++) {
+            m[i][i] = menoresValor[i][i];
+        }
+
+        for (int l = 1; l < meses; l++) {
+            for (int i = 0; i < meses - l; i++) {
+                int j = i + l;
+                m[i][j] = menoresValor[i][j];
+                for (int k = i; k < j; k++) {
+                    double q = m[i][k] + m[k + 1][j] + taxa;
+                    if (q < m[i][j]) {
+                        m[i][j] = q;
+                        s[i][j] = k;
+                    }
+                }
+            }
+        }
+
+        printDinamico(0, meses - 1, menoresValor, fornecedores_matriz, s);
+
+    }
+
+    //Ω (1) e O(m^2)
+    public void printDinamico(int i, int j, double[][] menoresValor, int[][] fornecedores_matriz, int[][] s) {
+
+        if (s[i][j] == -1) {
+
+            System.out.println("Contrato Fornecedor: " + fornecedores_matriz[i][j] + "\n Mes inicio: " + (i + 1) + "\n Mes Fim:  " + (j + 1) + "\n Valor Unit:  " + menoresValor[i][j]);
+            System.out.println("-------------------------");
+
+        } else {
+            printDinamico(i, s[i][j], menoresValor, fornecedores_matriz, s);
+            printDinamico(s[i][j] + 1, j, menoresValor, fornecedores_matriz, s);
+            
+            
+            
+            
+        }
+    }    // </editor-fold>
 }
