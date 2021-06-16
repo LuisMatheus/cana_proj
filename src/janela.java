@@ -269,7 +269,7 @@ public class janela extends javax.swing.JFrame {
 
         jLabel16.setText("Θ(mn^2)");
 
-        jLabel17.setText("Ωnm");
+        jLabel17.setText("Ω(nm)");
 
         jLabel18.setText("ms");
 

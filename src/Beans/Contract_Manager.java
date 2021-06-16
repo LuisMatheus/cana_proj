@@ -243,7 +243,8 @@ public abstract class Contract_Manager {
 
         for (int i = 0; i < aux.size(); i++) {
 
-            printAdd(aux.get(i).getFornecedor() + " " + aux.get(i).getMes_inicio() + " " + aux.get(i).getMes_fim() + " " + aux.get(i).getValor_Contrato());
+            printAdd("Contrato Fornecedor: " + aux.get(i).getFornecedor() + "\n Mes inicio: " + aux.get(i).getMes_inicio() + "\n Mes Fim:  " + aux.get(i).getMes_fim() + "\n Valor Unit:  " + aux.get(i).getValor_Contrato());
+            printAdd("-------------------------");
             valor = valor + aux.get(i).getValor_Contrato();
             if (i != aux.size() - 1) {
                 valor = valor + taxa;
@@ -320,6 +321,12 @@ public abstract class Contract_Manager {
         double[][] m = new double[meses][meses];
         int[][] s = new int[meses][meses];
 
+        for (int[] item : s) {
+            for (int col = 0; col < item.length; col++) {
+                item[col] = -1;
+            }
+        }
+
         for (int i = 0; i < meses; i++) {
             m[i][i] = menoresValor[i][i];
         }
@@ -347,16 +354,13 @@ public abstract class Contract_Manager {
 
         if (s[i][j] == -1) {
 
-            System.out.println("Contrato Fornecedor: " + fornecedores_matriz[i][j] + "\n Mes inicio: " + (i + 1) + "\n Mes Fim:  " + (j + 1) + "\n Valor Unit:  " + menoresValor[i][j]);
-            System.out.println("-------------------------");
+            printAdd("Contrato Fornecedor: " + fornecedores_matriz[i][j] + "\n Mes inicio: " + (i + 1) + "\n Mes Fim:  " + (j + 1) + "\n Valor Unit:  " + menoresValor[i][j]);
+            printAdd("-------------------------");
 
         } else {
             printDinamico(i, s[i][j], menoresValor, fornecedores_matriz, s);
             printDinamico(s[i][j] + 1, j, menoresValor, fornecedores_matriz, s);
-            
-            
-            
-            
+
         }
     }    // </editor-fold>
 }

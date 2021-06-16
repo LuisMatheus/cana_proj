@@ -444,7 +444,7 @@
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel17">
               <Properties>
-                <Property name="text" type="java.lang.String" value="&#x3a9;nm"/>
+                <Property name="text" type="java.lang.String" value="&#x3a9;(nm)"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel18">
